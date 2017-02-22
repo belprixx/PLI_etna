@@ -1,0 +1,23 @@
+{
+  "name": "pli_etna",
+  "version": "1.0.0",
+  "description": "projet PLI etna",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/belprixx/PLI_etna.git"
+  },
+  "keywords": [
+    "pli",
+    "etna"
+  ],
+  "author": "theo tison",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/belprixx/PLI_etna/issues"
+  },
+  "homepage": "https://github.com/belprixx/PLI_etna#readme"
+}
