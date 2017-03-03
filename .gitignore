@@ -40,3 +40,9 @@ jspm_packages
 # GULP COPY
 
 /front/lib/js/modules
+
+# Gulp minify
+front/lib/minify/
+
+#PHP storm
+.idea/
