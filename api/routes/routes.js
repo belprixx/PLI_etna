@@ -25,6 +25,25 @@ REST_ROUTER.prototype.handleRoutes= function(router,connection,md5) {
           }
       });
   });
+  router.post ("/login", function(req, res){
+	var query = "SELECT ?? , ?? FROM ?? where ??= ? and ??=? ";
+    var table = ["mail","password", "user" ,"mail", req.body.mail, "password", md5(req.body.password)];
+    query = mysql.format(query,table);
+    connection.query(query,function(err,rows){  
+		if(err) {
+			res.json({"Error" : 400, "Message" : "Error executing MySQL query"});
+		} else{
+			res.json({
+				"Error": 200,
+				"User": rows
+			});
+		}
+	});
+  });
 }
+
+
+
+
 
 module.exports = REST_ROUTER;
