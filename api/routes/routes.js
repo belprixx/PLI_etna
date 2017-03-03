@@ -5,9 +5,8 @@ function REST_ROUTER(router,connection,md5) {
 }
 
 REST_ROUTER.prototype.handleRoutes= function(router,connection,md5) {
-    router.get("/",function(req,res){
-        res.json({ "Message" : "Hello World !" });
-    });
+    
+    // API RESGISTER
     router.post("/register",function(req,res){
       var query = "INSERT INTO ??(??,??,??,??) VALUES (?,?,?,?)";
       var table = ["user","name","mail","roles","password",req.body.name,req.body.mail,req.body.roles,md5(req.body.password)];
@@ -25,11 +24,14 @@ REST_ROUTER.prototype.handleRoutes= function(router,connection,md5) {
           }
       });
   });
+  // END API REGISTER
+
+  // API LOGIN
   router.post ("/login", function(req, res){
-	var query = "SELECT ?? , ?? FROM ?? where ??= ? and ??=? ";
-    var table = ["mail","password", "user" ,"mail", req.body.mail, "password", md5(req.body.password)];
+	var query = "SELECT ?? FROM ?? where ??= ? and ??=? ";
+    var table = ["id", "user" ,"mail", req.body.mail, "password", md5(req.body.password)];
     query = mysql.format(query,table);
-    connection.query(query,function(err,rows){  
+    connection.query(query,function(err,rows){
 		if(err) {
 			res.json({"Error" : 400, "Message" : "Error executing MySQL query"});
 		} else{
@@ -40,10 +42,9 @@ REST_ROUTER.prototype.handleRoutes= function(router,connection,md5) {
 		}
 	});
   });
+  // END API LOGIN
+
+
 }
-
-
-
-
 
 module.exports = REST_ROUTER;
