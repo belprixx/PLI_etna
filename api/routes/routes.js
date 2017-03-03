@@ -1,12 +1,9 @@
-// create the module and name it routeApp
-var routeApp = angular.module('pliApp', ['ngRoute','LocalStorageModule', 'ui.bootstrap']);
+const express = require('express');
+const router = express.Router();
 
-// configure our routes
-routeApp.config(function($routeProvider) {
-    $routeProvider
-    // route for the home page
-        .when('/', {
-          templateUrl : '/view/home.html',
-          controller : 'homeController'
-        })
-    }
+/* GET api listing. */
+router.get('/test', (req, res) => {
+  res.send('api works');
+});
+
+module.exports = router;
