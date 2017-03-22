@@ -29,6 +29,7 @@
     "gulp-concat": "^2.6.1",
     "gulp-rename": "^1.2.2",
     "gulp-uglify": "^2.0.1",
+    "dropbox-v2-api": "ˆ1.0.10",
     "mysql": "~2.5.5"
   },
   "bugs": {
