@@ -19,7 +19,8 @@ gulp.task('clean:lib', function () {
 gulp.task('copy', ['clean:lib'], function () {
     var modules = {
         "angular":                      "angular/*.{js,map,css,ttf,svg,woff,eot}",
-        "angular-route":                "angular-route/*.{js,map}"
+        "angular-route":                "angular-route/*.{js,map}",
+        "angular-local-storage":        "angular-local-storage/dist/*.{js,map}"
     };
 
     for (var destinationDir in modules) {

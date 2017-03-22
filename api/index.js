@@ -4,6 +4,8 @@ var mysql   = require("mysql");
 var bodyParser  = require("body-parser");
 var md5 = require('MD5');
 var rest = require("./routes/routes.js");
+var dropbox = require("./dropbox/dropbox.js");
+var google = require("./google/google.js")
 var app  = express();
 
 function REST(){
@@ -40,7 +42,9 @@ REST.prototype.configureExpress = function(connection) {
       app.use(bodyParser.json());
       var router = express.Router();
       app.use('/api', router);
-      var rest_router = new rest(router,connection,md5);
+      var rest_router = new rest(router, connection, md5);
+      var rest_dropbox = new dropbox(router, connection, md5);
+      var rest_google = new google(router, connection, md5);
       self.startServer();
 }
 
@@ -55,24 +59,5 @@ REST.prototype.stop = function(err) {
     process.exit(1);
 }
 
-REST.prototype.connectGoogleDrive = function (err){
-  var OAuth2 = google.auth.OAuth2;
-
-  var oauth2Client = new OAuth2("532417609984-6grimhtlrblhkrjgkvmi1okem6pkfhs2.apps.googleusercontent.com", "JrSHP3fMBl-9CuZkGZmrgB2f", "http://localhost:3000/api/googleCallBack");
-
-  // generate a url that asks permissions for Google+ and Google Calendar scopes
-  var scopes = [
-    'https://www.googleapis.com/auth/gmail.modify'
-  ];
-
-  var url = oauth2Client.generateAuthUrl({
-    access_type: 'offline', // 'online' (default) or 'offline' (gets refresh_token)
-    scope: scopes // If you only need one scope you can pass it as string
-  });
-
-  app.get("/url", function(req, res) {
-    res.send(url);
-  });
-}
 
 new REST();
