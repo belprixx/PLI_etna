@@ -29,7 +29,8 @@
     "gulp-concat": "^2.6.1",
     "gulp-rename": "^1.2.2",
     "gulp-uglify": "^2.0.1",
-    "mysql": "~2.5.5"
+    "mysql": "~2.5.5",
+    "mega": "~0.2.0"
   },
   "bugs": {
     "url": "https://github.com/belprixx/PLI_etna/issues"
