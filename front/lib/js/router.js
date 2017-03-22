@@ -7,5 +7,14 @@ routeApp.config(function($routeProvider) {
     .when("/", {
         templateUrl : '/view/home.html',
         controller : 'homeController'
+    })
+    .when("/register", {
+        templateUrl: '/view/register.html',
+        controller : 'registerController'
+    })
+    .when("/login", {
+        templateUrl :'/view/login.html',
+        controller : 'loginController'
+
     });
-})
+});
