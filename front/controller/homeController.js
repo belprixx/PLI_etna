@@ -1,6 +1,10 @@
-angular.module('pliApp').controller('homeController', function($scope, $location, $http, $window) {
-    var wtop;
+angular.module('pliApp').controller('homeController', function($scope, $location, $http, $window, userFactory) {
 
+    var userName = userFactory.getUsername();
+    $scope.fistName = userName.firstName;
+    $scope.lastName = userName.lastName;
+
+    var wtop;
 	$scope.myFunc = function() {
         console.log("clik");
         $http({method: 'POST', url: '/api/test'}).

@@ -1,5 +1,5 @@
 // create the module and name it routeApp
-var routeApp = angular.module('pliApp', ['ngRoute']);
+var routeApp = angular.module('pliApp', ['ngRoute', 'LocalStorageModule']);
 
 // configure our routes
 routeApp.config(function($routeProvider) {
@@ -16,5 +16,26 @@ routeApp.config(function($routeProvider) {
         templateUrl :'/view/login.html',
         controller : 'loginController'
 
+    })
+    // route for the home page
+    .otherwise({
+        redirectTo: '/'
     });
-});
+}).run(['$rootScope', 'localStorageService', '$location', 'userFactory',
+    function($rootScope, localStorageService, $location, userFactory) {
+        $rootScope.$on('$routeChangeStart', function(event) {
+            if ($location.url() == '/register' && !userFactory.isSignedIn()){
+                    $location.path('/register')
+            }
+            else if ($location.url() == '/register' && userFactory.isSignedIn()){
+                  event.preventDefault()
+            }
+            else if (!userFactory.isSignedIn()){
+                $location.path('/login');
+              }
+            else if ($location.path() == '/login'){
+                event.preventDefault();
+            }
+        });
+    }
+]);

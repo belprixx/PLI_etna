@@ -5,6 +5,7 @@ var bodyParser  = require("body-parser");
 var md5 = require('MD5');
 var rest = require("./routes/routes.js");
 var dropbox = require("./dropbox/dropbox.js");
+var google = require("./google/google.js")
 var app  = express();
 
 function REST(){
@@ -42,7 +43,8 @@ REST.prototype.configureExpress = function(connection) {
       var router = express.Router();
       app.use('/api', router);
       var rest_router = new rest(router, connection, md5);
-      var rest_dropbox = new dropbox(router, connection, md5)
+      var rest_dropbox = new dropbox(router, connection, md5);
+      var rest_google = new google(router, connection, md5);
       self.startServer();
 }
 
