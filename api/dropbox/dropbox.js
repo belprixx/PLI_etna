@@ -27,6 +27,7 @@ REST_DROPBOX.prototype.handleRoutes= function(router,connection,md5) {
          console.log("cc1");
          var authUrl = oauth.generateAuthUrl();
 		 opn(authUrl);
+		 res.status(200);
         //  res.json({
         // 	"Error": 200,
         //     "Url": authUrl,
@@ -39,7 +40,7 @@ REST_DROPBOX.prototype.handleRoutes= function(router,connection,md5) {
          var params = req.query;
          console.log(params);
         oauth.getToken(params.code, function(err, response){
-            console.log(response);
+            
         	console.log('user\'s access_token: ',response.access_token);
         	// call api
         	dropbox({
