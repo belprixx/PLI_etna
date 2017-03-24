@@ -10,7 +10,7 @@ REST_ROUTER.prototype.handleRoutes= function(router,connection,md5) {
     // API RESGISTER
     router.post("/register",function(req,res){
       var query = "INSERT INTO ??(??,??,??,??,??) VALUES (?,?,?,?,?)";
-      var table = ["user","Firstname","Lastname","mail","roles","password",req.body.fistName,req.body.lastName,req.body.mail,req.body.roles,md5(req.body.password)];
+      var table = ["user","Firstname","Lastname","mail","roles","password",req.body.firstName,req.body.lastName,req.body.mail,req.body.roles,md5(req.body.password)];
       query = mysql.format(query,table);
       connection.query(query,function(err,rows){
           if(err) {

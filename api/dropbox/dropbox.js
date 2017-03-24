@@ -1,4 +1,5 @@
 const dropbox = require('dropbox-v2-api');
+const opn = require('opn');
 //set credentials
 const oauth = dropbox.authenticate({
 	client_id: '7vigo6r0jdtgdiu',
@@ -24,11 +25,12 @@ REST_DROPBOX.prototype.handleRoutes= function(router,connection,md5) {
     // ROUTE DropBox login
      router.get("/dropbox/login", function(req, res){
          console.log("cc1");
-         const authUrl = oauth.generateAuthUrl();
-         res.json({
-        	"Error": 200,
-            "Url": authUrl,
-         });
+         var authUrl = oauth.generateAuthUrl();
+		 opn(authUrl);
+        //  res.json({
+        // 	"Error": 200,
+        //     "Url": authUrl,
+        //  });
      });
     // END DropBox login
 
@@ -43,7 +45,8 @@ REST_DROPBOX.prototype.handleRoutes= function(router,connection,md5) {
         	dropbox({
 				resource: 'users/get_current_account'
 			}, function(err, response){
-				res.json({response: response});
+				res.redirect("/");
+				// res.json({response: response});
 			});
         });
      });
