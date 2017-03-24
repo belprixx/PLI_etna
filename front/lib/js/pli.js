@@ -21,3 +21,8 @@ window.onclick = function(event) {
         }
     }
 };
+
+function showFile() {
+    window.location = "api/dropbox/login";
+    document.getElementById("dropbox").style.visibility = "visible";
+}

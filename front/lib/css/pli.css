@@ -354,3 +354,8 @@ html, body { height: 100%; width: 100%; font-family: Helvetica, Arial, sans-seri
 
 /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
 .show {display:block;}
+
+
+#dropbox {
+    visibility: hidden;
+}
