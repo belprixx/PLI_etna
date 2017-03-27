@@ -32,7 +32,8 @@
     "gulp-uglify": "^2.0.1",
     "mega": "~0.2.0",
     "dropbox-v2-api": "^1.0.10",
-    "mysql": "~2.5.5"
+    "mysql": "~2.5.5",
+    "opn": "^4.0.2"
   },
   "bugs": {
     "url": "https://github.com/belprixx/PLI_etna/issues"
