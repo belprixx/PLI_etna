@@ -1,6 +1,7 @@
 var google = require("googleapis");
+const opn = require('opn');
 var OAuth2 = google.auth.OAuth2;
-var oauth2Client = new OAuth2('789981830396-ht9j545usj60vsqgpdccran0l6ghvmgv.apps.googleusercontent.com', 'Uge7KgC1gS0OTo1OsM1PyJYR', 'http://localhost:3000/api');
+var oauth2Client = new OAuth2('789981830396-ht9j545usj60vsqgpdccran0l6ghvmgv.apps.googleusercontent.com', 'Uge7KgC1gS0OTo1OsM1PyJYR', 'http://localhost:3000/api/google/oauth2callback');
 var scopes = [
   'https://www.googleapis.com/auth/drive'
 ];
@@ -25,23 +26,24 @@ REST_GOOGLE.prototype.handleRoutes= function(router,connection,md5) {
      });
     // END ROUTE TEST
 
-    router.post("/google/url", function(req, res) {
-	    res.send(url);
+    router.get("/google/url", function(req, res) {
+        opn(url);
 	    res.status(200);
 	});
 
-    // ROUTE google oauthRedirect 
+    // ROUTE google oauthRedirect
     router.get("/google/oauth2callback", function(req, res){
-         
+
 	    var code = req.query.code;
 
 	     oauth2Client.getToken(code, function(err, tokens) {
 	      if (err) {
 	        res.send(err);
 	        return;
-	      }      
+	      }
 	      oauth2Client.setCredentials(tokens);
-	      res.send(tokens);
+	    //   res.send(tokens);
+        res.redirect("/");
 	    });
      });
 }
