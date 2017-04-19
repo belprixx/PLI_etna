@@ -27,6 +27,7 @@ REST_ROUTER.prototype.handleRoutes= function(router,connection,md5) {
 	var query = "SELECT * FROM ?? where ??= ? and ??=? ";
     var table = ["user" ,"mail", req.body.mail, "password", md5(req.body.password)];
     query = mysql.format(query,table);
+    console.log(query);
     connection.query(query,function(err,rows){
 		if(err) {
 			res.json({"Error" : 400, "Message" : "Error executing MySQL query"});
