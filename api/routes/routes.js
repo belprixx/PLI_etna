@@ -24,7 +24,7 @@ REST_ROUTER.prototype.handleRoutes= function(router,connection,md5) {
 
   // API LOGIN
   router.post ("/login", function(req, res){
-	var query = "SELECT * FROM ?? where ??= ? and ??=? ";
+	  var query = "SELECT * FROM ?? where ??= ? and ??=? ";
     var table = ["user" ,"mail", req.body.mail, "password", md5(req.body.password)];
     query = mysql.format(query,table);
     connection.query(query,function(err,rows){
@@ -40,6 +40,25 @@ REST_ROUTER.prototype.handleRoutes= function(router,connection,md5) {
   });
   // END API LOGIN
 
+  // USER CLOUD LIST
+    router.post ("/cloud/list", function(req, res){
+      var query = "SELECT * FROM ?? where ??= ?";
+      var table = ["token" ,"id_user", req.body.userId];
+      query = mysql.format(query,table);
+      connection.query(query,function(err,rows){
+      if(err) {
+        res.json({"Error" : 400, "Message" : "Error executing MySQL query"});
+      } else{
+        res.json({
+          "Error": 200,
+          "Cloud": rows //tableau d'array
+        });
+      }
+     });
+    });
+    // USER CLOUD LIST
+
+    
 }
 
 module.exports = REST_ROUTER;
