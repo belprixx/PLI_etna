@@ -10,7 +10,6 @@ var url = oauth2Client.generateAuthUrl({
   access_type: 'offline', // 'online' (default) or 'offline' (gets refresh_token)
   scope: scopes // If you only need one scope you can pass it as string
 });
-var accessToken = "cc";
 
 function REST_GOOGLE(router,connection,md5) {
     var self = this;
@@ -54,11 +53,10 @@ REST_GOOGLE.prototype.handleRoutes= function(router,connection,md5) {
 	        res.send(err);
 	        return;
 	      }
-	      
+	      console.log(tokens);
         oauth2Client.setCredentials(tokens);
                 
          //INSERT TOKEN INTO DATABASE
-          accessToken = tokens.access_token
           var query = "UPDATE ?? SET ?? = ?, ?? = ? , ?? = ? , ?? = ? WHERE ?? = ?";
           var table = ["token", "access_token", tokens.access_token,"token_type", 
                         tokens.token_type,"expiry_date", tokens.expiry_date,"code", code, "id_user", global.userId];
@@ -74,39 +72,58 @@ REST_GOOGLE.prototype.handleRoutes= function(router,connection,md5) {
                   "status" : 200,
                 });
               }            
-        });
-        //   res.send(tokens);  
+        }); 
       });
      });
 
   //RETURN FILES
   router.post ("/google/list", function(req, res){
-    var query = "select ??, ??, ?? from ?? where ?? = ?";
-    var table = ["code", "access_token", "refresh_token",  "token", "id_user", req.body.userId];
+    var query = "select ??, ??, ??, ?? from ?? where ?? = ?";
+    var table = ["code", "access_token", "expiry_date", "token_type", "token", "id_user", req.body.userId];
     
     query = mysql.format(query,table);
     connection.query(query,function(err, rows){
+
       if(err) {
-       res.json({
-          "status" : 400
+        res.json({"Error" : 400, "Message" : "Error executing MySQL query"});
+      } else{
+        oauth2Client.setCredentials({
+          access_token: rows[0].access_token,
+          expiry_date: rows[0].expiry_date,
+          token_type: rows[0].token_type
         });
-      }else{
-        oauth2Client.getToken(rows[0].code, function(err, tokens) {
-          if (!err) {
-            oauth2Client.setCredentials({
-              access_tokens: rows[0].access_token,
-              refresh_tokens: rows[0].refresh_token,
-              expiry_date: true
-            });
-          }
-            var files = listFiles(oauth2Client);
-            console.log("Files : " + files);
-            // res.json({
-            //   "status" : 200,
-            //   "data": files,
-            // });
-        });
-      }      
+        
+        var table = new Array(); 
+        table =  listFiles(oauth2Client);     
+        console.log("url :" + table);
+        // res.json({
+        //   "Error": 200,
+        //   "User": listFiles(oauth2Client);
+        // });
+      }
+
+
+      // if(err) {
+      //   console.log("err");
+      //   res.json({
+      //     "status" : 400
+      //   });
+      // }else{   
+      //   //console.log(rows);
+      //   oauth2Client.setCredentials({
+      //     access_token: rows[0].access_token,
+      //     expiry_date: rows[0].expiry_date,
+      //     token_type: rows[0].token_type
+      //   });
+
+      //   var tab = [];
+      //   tab = listFiles(oauth2Client);
+
+      //   res.json({
+      //     "Error": 200,
+      //     "User": tab
+      //   });
+      // }      
     }); 
   });
      
@@ -120,16 +137,18 @@ function listFiles(auth) {
       console.log('The API returned an error: ' + err);
       return;
     }
-    var files = response.files;
+    var files = new Array();  
+    files = response.files;
     if (files.length == 0) 
     {
       console.log('No files found.');
     } 
-    else
-    {
-      console.log(files);
-      return files;
-    }
+    //else
+    // {
+    //   console.log(files);
+    //   return files;
+    // }
+    return files;
   });
 }
 
