@@ -6,9 +6,14 @@ var scopes = [
   'https://www.googleapis.com/auth/drive'
 ];
 var mysql = require('mysql');
+var fs = require('fs');
 var url = oauth2Client.generateAuthUrl({
   access_type: 'offline', // 'online' (default) or 'offline' (gets refresh_token)
   scope: scopes // If you only need one scope you can pass it as string
+});
+var drive = google.drive({
+  version: 'v3',
+  auth: oauth2Client
 });
 
 function REST_GOOGLE(router,connection,md5) {
@@ -22,7 +27,7 @@ REST_GOOGLE.prototype.handleRoutes= function(router,connection,md5) {
      router.post ("/google/test", function(req, res){
          console.log("Google");
          res.json({
-        	"Error": 200,
+          "Error": 200,
          });
      });
     // END ROUTE TEST
@@ -41,19 +46,19 @@ REST_GOOGLE.prototype.handleRoutes= function(router,connection,md5) {
             }
         });      
         opn(url);
-	   });
+     });
 
     // ROUTE google oauthRedirect
     router.get("/google/oauth2callback", function(req, res){
 
-	    var code = req.query.code;
+      var code = req.query.code;
 
-	     oauth2Client.getToken(code, function(err, tokens) {
-	      if (err) {
-	        res.send(err);
-	        return;
-	      }
-	      console.log(tokens);
+       oauth2Client.getToken(code, function(err, tokens) {
+        if (err) {
+          res.send(err);
+          return;
+        }
+        console.log(tokens);
         oauth2Client.setCredentials(tokens);
                 
          //INSERT TOKEN INTO DATABASE
@@ -93,63 +98,112 @@ REST_GOOGLE.prototype.handleRoutes= function(router,connection,md5) {
           token_type: rows[0].token_type
         });
         
-        var table = new Array(); 
-        table =  listFiles(oauth2Client);     
-        console.log("url :" + table);
-        // res.json({
-        //   "Error": 200,
-        //   "User": listFiles(oauth2Client);
-        // });
-      }
-
-
-      // if(err) {
-      //   console.log("err");
-      //   res.json({
-      //     "status" : 400
-      //   });
-      // }else{   
-      //   //console.log(rows);
-      //   oauth2Client.setCredentials({
-      //     access_token: rows[0].access_token,
-      //     expiry_date: rows[0].expiry_date,
-      //     token_type: rows[0].token_type
-      //   });
-
-      //   var tab = [];
-      //   tab = listFiles(oauth2Client);
-
-      //   res.json({
-      //     "Error": 200,
-      //     "User": tab
-      //   });
-      // }      
+        res.json({
+          "status" : 200,
+          "tabListeFiles" : listFiles(oauth2Client),
+        });
+      }      
     }); 
   });
-     
+  
+
+  router.post ("/google/download", function(req, res){
+    var query = "select ??, ??, ??, ?? from ?? where ?? = ?";
+    var table = ["code", "access_token", "expiry_date", "token_type", "token", "id_user", req.body.userId];
+    
+    query = mysql.format(query,table);
+    connection.query(query,function(err, rows){
+
+      if(err) {
+        res.json({"Error" : 400, "Message" : "Error executing MySQL query"});
+      } else{
+        oauth2Client.setCredentials({
+          access_token: rows[0].access_token,
+          expiry_date: rows[0].expiry_date,
+          token_type: rows[0].token_type
+        });
+        var download = false;
+        download = downloadFiles(oauth2Client, '1QupFzI6uFK1z4NDW_nhBbSFsqJNktnOg0eDHzjLvK5I');
+        if (download = false){
+          res.json({
+            "status" : 400
+          });
+        }else{
+          res.json({
+            "status" : 200,
+            "tabListeFiles" : download,
+          });   
+        }
+      }      
+    }); 
+  });
 }
 
+
 function listFiles(auth) {
-  console.log("inside listFiles");
-  var service = google.drive('v3');
-  service.files.list({auth: auth,pageSize: 10,fields: "nextPageToken, files(id, name)" }, function(err, response) {
+  //var service = google.drive('v3');
+  drive.files.list({
+    auth: auth,
+    pageSize: 10,
+    fields: "nextPageToken, files(id, name)"
+  }, function(err, response) {
     if (err) {
       console.log('The API returned an error: ' + err);
       return;
     }
-    var files = new Array();  
-    files = response.files;
-    if (files.length == 0) 
-    {
+    var files = response.files;
+    if (files.length == 0) {
       console.log('No files found.');
-    } 
-    //else
-    // {
-    //   console.log(files);
-    //   return files;
-    // }
-    return files;
+    } else {
+      console.log('Files:');
+      for (var i = 0; i < files.length; i++) {
+        var file = files[i];
+        //console.log('%s (%s)', file.name, file.id);
+      }
+      return files;
+    }
   });
 }
+
+////
+// Récupération des fichiers d'un compte Google
+// Return : tableau de fichier
+// fichier => nom; id;
+////
+function downloadFiles(auth, fileId) {
+ drive.files.get({fileId: fileId }, function (err, metadata) {
+    if (err) {
+      console.error(err);
+      return process.exit();
+    }
+
+    console.log('Downloading %s...', metadata.name);
+
+    var dest = fs.createWriteStream(metadata.name);
+
+    drive.files.get({fileId: fileId,alt: 'media'}).on('error', function (err) {
+      console.log('Error downloading file', err);
+      process.exit();
+    }).pipe(dest);
+
+    dest.on('finish', function () {
+        console.log('Downloaded %s!', metadata.name);
+        return true
+    }).on('error', function (err) {
+      console.log('Error writing file', err);
+      return false;
+    });
+  });
+}
+
+
+///
+// Récupération de l'espace restante d'un compte Google
+// Return : pourcentage de l'espace restante
+////
+function getRemainingSpace(){
+
+}
+
 
 module.exports = REST_GOOGLE;

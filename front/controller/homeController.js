@@ -44,9 +44,21 @@ angular.module('pliApp').controller('homeController', function($scope, $location
               });
        }
 
-     console.log("Liste files google");
-     $http({
-          url: "/api/google/list", method: 'POST',
+    //  console.log("Liste files google");
+    //  $http({
+    //       url: "/api/google/list", method: 'POST',
+    //       data: data,
+    //       headers : {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'}
+    //     }).then(function(response) {
+    //       if(response.status === 200) {
+    //         console.log("response :" + response);            
+    //       }
+    //     });
+    // };  
+
+    console.log("download files google");
+    $http({
+          url: "/api/google/download", method: 'POST',
           data: data,
           headers : {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'}
         }).then(function(response) {
@@ -54,5 +66,7 @@ angular.module('pliApp').controller('homeController', function($scope, $location
             console.log("response :" + response);            
           }
         });
-    };    
+    };
+
+
 });
