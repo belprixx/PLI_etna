@@ -137,6 +137,36 @@ REST_GOOGLE.prototype.handleRoutes= function(router,connection,md5) {
       }      
     }); 
   });
+
+   router.post ("/google/upload", function(req, res){
+    var query = "select ??, ??, ??, ?? from ?? where ?? = ?";
+    var table = ["code", "access_token", "expiry_date", "token_type", "token", "id_user", req.body.userId];
+    
+    query = mysql.format(query,table);
+    connection.query(query,function(err, rows){
+
+      if(err) {
+        res.json({"Error" : 400, "Message" : "Error executing MySQL query"});
+      } else{
+        oauth2Client.setCredentials({
+          access_token: rows[0].access_token,
+          expiry_date: rows[0].expiry_date,
+          token_type: rows[0].token_type
+        });
+        var upload = false;
+        //=>>>>>>> upload = uploadFiles(auth, nameMedia, typeMedia, urlMedia);
+        if (upload = false){
+          res.json({
+            "status" : 400
+          });
+        }else{
+          res.json({
+            "status" : 200
+          });   
+        }
+      }      
+    }); 
+  });
 }
 
 
@@ -203,6 +233,41 @@ function downloadFiles(auth, fileId) {
 ////
 function getRemainingSpace(){
 
+}
+
+
+///
+//Upload File
+//nameMedia => nom
+//typeMedia => png,jpg, pdf
+//url => ordi...
+///
+function uploadFiles(auth, nameMedia, typeMedia, urlMedia){
+
+  var fileMetadata = {
+    'name': nameMedia
+  };
+
+  var media = {
+    mimeType: typeMedia,
+    body: fs.createReadStream(urlMedia)
+  };
+
+
+  drive.files.create({
+     resource: fileMetadata,
+     media: media,
+     fields: 'id'
+    }, function(err, file) {
+    if(err) {
+      // Handle error
+      console.log(err);
+      return false;
+    } else {
+      return true;
+      console.log('Le fichier a été uploadé et possède l\'id : ', file.id);
+    }
+  });
 }
 
 
