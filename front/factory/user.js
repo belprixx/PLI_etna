@@ -5,6 +5,7 @@ angular.module('pliApp').factory('userFactory', ['localStorageService',
 			userlastname: '',
 			userId: '',
 			logged: false
+			//cloud = array
 		};
 
 		var existing = localStorageService.get('user');
@@ -44,11 +45,15 @@ angular.module('pliApp').factory('userFactory', ['localStorageService',
 		userEntity.isSignedIn = function() {
 			return userEntity.logged;
 		};
+		userEntity.getUserId = function() {
+			return userEntity.userId;
+		};
 
 		userEntity.getUsername = function() {
             var userName = {
                 firstName: userEntity.userFirstname,
-                lastName: userEntity.userlastname
+                lastName: userEntity.userlastname,
+                userId: userEntity.userId
             }
 			return userName;
 		};
