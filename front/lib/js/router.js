@@ -22,6 +22,11 @@ routeApp.config(function($routeProvider) {
         controller : 'logoutController'
 
     })
+    .when("/stats", {
+        templateUrl :'/view/stat.html',
+        controller : 'statsController'
+
+    })
     // route for the home page
     .otherwise({
         redirectTo: '/'
