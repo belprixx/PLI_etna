@@ -15,7 +15,7 @@ angular.module('pliApp').controller('loginController', function($scope, $locatio
                             console.log("BAD MDP");
                         }
                         else {
-                            console.log(response.data.User[0]);
+                            console.log(response.data);
                             var user = response.data.User[0];
                             var login = userFactory.setUsername(user.Firstname, user.Lastname, user.id).login();
                             $location.url('/');

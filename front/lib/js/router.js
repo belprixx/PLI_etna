@@ -17,6 +17,11 @@ routeApp.config(function($routeProvider) {
         controller : 'loginController'
 
     })
+    .when("/logout", {
+        templateUrl :'/view/logout.html',
+        controller : 'logoutController'
+
+    })
     // route for the home page
     .otherwise({
         redirectTo: '/'

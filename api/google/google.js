@@ -242,7 +242,7 @@ function getRemainingSpace(){
 //typeMedia => png,jpg, pdf
 //url => ordi...
 ///
-function uploadFiles(auth, nameMedia, typeMedia, urlMedia){
+/*function uploadFiles(auth, nameMedia, typeMedia, urlMedia){
 
   var fileMetadata = {
     'name': nameMedia
@@ -268,7 +268,6 @@ function uploadFiles(auth, nameMedia, typeMedia, urlMedia){
       console.log('Le fichier a été uploadé et possède l\'id : ', file.id);
     }
   });
-}
-
+}*/
 
 module.exports = REST_GOOGLE;

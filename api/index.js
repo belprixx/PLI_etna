@@ -22,7 +22,6 @@ REST.prototype.connectMysql = function() {
         user     : 'root',
         password : 'root',
         database : 'pli',
-      //  socketPath: '/Applications/MAMP/tmp/mysql/mysql.sock',
         debug    :  false
     });
     pool.getConnection(function(err,connection){
