@@ -5,7 +5,9 @@ var oauth2Client = new OAuth2('789981830396-ht9j545usj60vsqgpdccran0l6ghvmgv.app
 var scopes = [
   'https://www.googleapis.com/auth/drive',
   'https://www.googleapis.com/auth/drive.file',
-  'https://www.googleapis.com/auth/drive.readonly'
+  'https://www.googleapis.com/auth/drive.readonly',
+  'https://www.googleapis.com/auth/drive.metadata.readonly',
+  'https://www.googleapis.com/auth/drive.metadata'
 ];
 var mysql = require('mysql');
 var fs = require('fs');
@@ -142,7 +144,7 @@ REST_GOOGLE.prototype.handleRoutes= function(router,connection,md5) {
     }); 
   });
 
-   router.post ("/google/upload", function(req, res){
+  router.post ("/google/upload", function(req, res){
     var query = "select ??, ??, ??, ?? from ?? where ?? = ?";
     var table = ["code", "access_token", "expiry_date", "token_type", "token", "id_user", req.body.userId];
     
@@ -160,6 +162,36 @@ REST_GOOGLE.prototype.handleRoutes= function(router,connection,md5) {
         var upload = false;
         upload = uploadFiles(oauth2Client, "text/html", "nomMediaTest", "/home/sfatier/index.html");
         if (upload = false){
+          res.json({
+            "status" : 400
+          });
+        }else{
+          res.json({
+            "status" : 200
+          });   
+        }
+      }      
+    }); 
+  });
+
+  router.post ("/google/about", function(req, res){
+    var query = "select ??, ??, ??, ?? from ?? where ?? = ?";
+    var table = ["code", "access_token", "expiry_date", "token_type", "token", "id_user", req.body.userId];
+    
+    query = mysql.format(query,table);
+    connection.query(query,function(err, rows){
+
+      if(err) {
+        res.json({"Error" : 400, "Message" : "Error executing MySQL query"});
+      } else{
+        oauth2Client.setCredentials({
+          access_token: rows[0].access_token,
+          expiry_date: rows[0].expiry_date,
+          token_type: rows[0].token_type
+        });
+        var about = false;
+        about = getRemainingSpace(oauth2Client);
+        if (about = false){
           res.json({
             "status" : 400
           });
@@ -271,10 +303,27 @@ function uploadFiles(auth,typeMedia, nameMedia, urlMedia){
 // Récupération de l'espace restante d'un compte Google
 // Return : pourcentage de l'espace restante
 ////
-function getRemainingSpace(){
+function getRemainingSpace(auth){
+    console.log(auth);
+        
+  try{
 
-}
-
+    drive.about.get({ }, function(err, resp) {
+      if (err){
+        console.log(err)
+      }else{
+        console.log("RESP : " + resp);
+      }
+      // console.log('Current user name: ' + resp.name);
+      // console.log('Root folder ID: ' + resp.rootFolderId);
+      // console.log('Total quota (bytes): ' + resp.quotaBytesTotal);
+      // console.log('Used quota (bytes): ' + resp.quotaBytesUsed);
+    });
+    return true;
+  }catch(e){
+    console.log("Error : Récupération des informations de l'utilisateur.");
+    return false;
+  }
 }
 
 module.exports = REST_GOOGLE;
