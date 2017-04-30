@@ -1,0 +1,13 @@
+{
+ "error": {
+  "errors": [
+   {
+    "domain": "global",
+    "reason": "fileNotExportable",
+    "message": "Export only supports Google Docs."
+   }
+  ],
+  "code": 403,
+  "message": "Export only supports Google Docs."
+ }
+}

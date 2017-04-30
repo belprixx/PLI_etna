@@ -3,7 +3,9 @@ const opn = require('opn');
 var OAuth2 = google.auth.OAuth2;
 var oauth2Client = new OAuth2('789981830396-ht9j545usj60vsqgpdccran0l6ghvmgv.apps.googleusercontent.com', 'Uge7KgC1gS0OTo1OsM1PyJYR', 'http://localhost:3000/api/google/oauth2callback');
 var scopes = [
-  'https://www.googleapis.com/auth/drive'
+  'https://www.googleapis.com/auth/drive',
+  'https://www.googleapis.com/auth/drive.file',
+  'https://www.googleapis.com/auth/drive.readonly'
 ];
 var mysql = require('mysql');
 var fs = require('fs');
@@ -97,6 +99,8 @@ REST_GOOGLE.prototype.handleRoutes= function(router,connection,md5) {
           expiry_date: rows[0].expiry_date,
           token_type: rows[0].token_type
         });
+
+        listFiles(oauth2Client);
         
         res.json({
           "status" : 200,
@@ -123,7 +127,7 @@ REST_GOOGLE.prototype.handleRoutes= function(router,connection,md5) {
           token_type: rows[0].token_type
         });
         var download = false;
-        download = downloadFiles(oauth2Client, '1QupFzI6uFK1z4NDW_nhBbSFsqJNktnOg0eDHzjLvK5I');
+        download = downloadFiles(oauth2Client,"application/pdf", '0B_tt8ZmaBB4BcTNrNlhNdmRURjQ');
         if (download = false){
           res.json({
             "status" : 400
@@ -154,7 +158,7 @@ REST_GOOGLE.prototype.handleRoutes= function(router,connection,md5) {
           token_type: rows[0].token_type
         });
         var upload = false;
-        //=>>>>>>> upload = uploadFiles(auth, nameMedia, typeMedia, urlMedia);
+        upload = uploadFiles(oauth2Client, "text/html", "nomMediaTest", "/home/sfatier/index.html");
         if (upload = false){
           res.json({
             "status" : 400
@@ -169,7 +173,10 @@ REST_GOOGLE.prototype.handleRoutes= function(router,connection,md5) {
   });
 }
 
-
+////
+// Liste des fichiers d'un compte Google
+// Return : tableau de fichier
+////
 function listFiles(auth) {
   //var service = google.drive('v3');
   drive.files.list({
@@ -188,7 +195,7 @@ function listFiles(auth) {
       console.log('Files:');
       for (var i = 0; i < files.length; i++) {
         var file = files[i];
-        //console.log('%s (%s)', file.name, file.id);
+        console.log('%s (%s)', file.name, file.id);
       }
       return files;
     }
@@ -200,10 +207,10 @@ function listFiles(auth) {
 // Return : tableau de fichier
 // fichier => nom; id;
 ////
-function downloadFiles(auth, fileId) {
+function downloadFiles(auth,typeMedia, fileId) {
  drive.files.get({fileId: fileId }, function (err, metadata) {
     if (err) {
-      console.error(err);
+      console.error("Error GET files :" +  err);
       return process.exit();
     }
 
@@ -211,7 +218,7 @@ function downloadFiles(auth, fileId) {
 
     var dest = fs.createWriteStream(metadata.name);
 
-    drive.files.get({fileId: fileId,alt: 'media'}).on('error', function (err) {
+    drive.files.export({fileId: fileId, mimeType: typeMedia}).on('error', function (err) {
       console.log('Error downloading file', err);
       process.exit();
     }).pipe(dest);
@@ -226,24 +233,13 @@ function downloadFiles(auth, fileId) {
   });
 }
 
-
-///
-// Récupération de l'espace restante d'un compte Google
-// Return : pourcentage de l'espace restante
-////
-function getRemainingSpace(){
-
-}
-
-
 ///
 //Upload File
 //nameMedia => nom
 //typeMedia => png,jpg, pdf
 //url => ordi...
 ///
-/*function uploadFiles(auth, nameMedia, typeMedia, urlMedia){
-
+function uploadFiles(auth,typeMedia, nameMedia, urlMedia){
   var fileMetadata = {
     'name': nameMedia
   };
@@ -264,10 +260,21 @@ function getRemainingSpace(){
       console.log(err);
       return false;
     } else {
-      return true;
       console.log('Le fichier a été uploadé et possède l\'id : ', file.id);
+      return true;
     }
   });
-}*/
+}
+
+
+///
+// Récupération de l'espace restante d'un compte Google
+// Return : pourcentage de l'espace restante
+////
+function getRemainingSpace(){
+
+}
+
+}
 
 module.exports = REST_GOOGLE;
