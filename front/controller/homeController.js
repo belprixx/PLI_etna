@@ -86,8 +86,9 @@ angular.module('pliApp').controller('homeController', function($scope, $location
           data: data,
           headers : {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'}
         }).then(function(response) {
+          var dataResponse = JSON.stringify(response);
           if(response.status === 200) {
-            console.log("response :" + response);            
+            console.log("Response :" + dataResponse);            
           }
         });
     };

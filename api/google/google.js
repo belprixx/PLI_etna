@@ -12,11 +12,13 @@ var scopes = [
 var mysql = require('mysql');
 var fs = require('fs');
 var url = oauth2Client.generateAuthUrl({
-  access_type: 'offline', // 'online' (default) or 'offline' (gets refresh_token)
-  scope: scopes // If you only need one scope you can pass it as string
+  access_type: 'offline', // 'offline' POUR FAIRE UN gets refresh_token
+  scope: scopes
 });
+
+//SERVICE UTILISE POUR UTILISER L'API
 var drive = google.drive({
-  version: 'v3',
+  version: 'v3', //VERSION DE L'API
   auth: oauth2Client
 });
 
@@ -27,65 +29,63 @@ function REST_GOOGLE(router,connection,md5) {
 
 REST_GOOGLE.prototype.handleRoutes= function(router,connection,md5) {
 
-// ROUTE TEST
-     router.post ("/google/test", function(req, res){
-         console.log("Google");
-         res.json({
-          "Error": 200,
-         });
-     });
-    // END ROUTE TEST
+  // ROUTE TEST
+   router.post ("/google/test", function(req, res){
+       console.log("Google");
+       res.json({
+        "Error": 200,
+       });
+   });
+  // END ROUTE TEST
 
-    router.post("/google/url", function(req, res) {
-      console.log(req.body);
-        userId = req.body.userId;
-        idCloud = req.body.idCloud;
+  router.post("/google/url", function(req, res) {
+    console.log(req.body);
+      userId = req.body.userId;
+      idCloud = req.body.idCloud;
 
-        var query = "INSERT INTO `token`(??, ??, ??, ??, ??, ??, ??) VALUES (?,?,?,?,?,?,?)";
-        var table = ["id", "id_user", "id_cloud", "access_token", "token_type", "expiry_date", "code", null, userId, idCloud, null, null, null, null];
-        query = mysql.format(query,table);
+      var query = "INSERT INTO `token`(??, ??, ??, ??, ??, ??, ??) VALUES (?,?,?,?,?,?,?)";
+      var table = ["id", "id_user", "id_cloud", "access_token", "token_type", "expiry_date", "code", null, userId, idCloud, null, null, null, null];
+      query = mysql.format(query,table);
+      connection.query(query,function(err, rows){
+          if(err) {
+            console.log("Error: 400 : Error executing MySQL query");
+          }
+      });      
+      opn(url);
+   });
+
+  // ROUTE google oauthRedirect
+  router.get("/google/oauth2callback", function(req, res){
+
+    var code = req.query.code;
+
+    oauth2Client.getToken(code, function(err, tokens) {
+      if (err) {
+        res.send(err);
+        return;
+      }
+      oauth2Client.setCredentials(tokens);
+              
+      //INSERT TOKEN INTO DATABASE
+      var query = "UPDATE ?? SET ?? = ?, ?? = ? , ?? = ? , ?? = ? WHERE ?? = ?";
+      var table = ["token", "access_token", tokens.access_token,"token_type",tokens.token_type,"expiry_date", tokens.expiry_date,"code", code, "id_user", global.userId];
+      
+      query = mysql.format(query,table);
         connection.query(query,function(err, rows){
-            if(err) {
-              console.log("Error: 400 : Error executing MySQL query");
-            }
-        });      
-        opn(url);
-     });
+        if(err) {
+          res.json({
+          "status" : 400
+          });
+        }else{
+          res.json({
+            "status" : 200,
+          });
+        }            
+      }); 
+    });
+   });
 
-    // ROUTE google oauthRedirect
-    router.get("/google/oauth2callback", function(req, res){
-
-      var code = req.query.code;
-
-       oauth2Client.getToken(code, function(err, tokens) {
-        if (err) {
-          res.send(err);
-          return;
-        }
-        console.log(tokens);
-        oauth2Client.setCredentials(tokens);
-                
-         //INSERT TOKEN INTO DATABASE
-          var query = "UPDATE ?? SET ?? = ?, ?? = ? , ?? = ? , ?? = ? WHERE ?? = ?";
-          var table = ["token", "access_token", tokens.access_token,"token_type", 
-                        tokens.token_type,"expiry_date", tokens.expiry_date,"code", code, "id_user", global.userId];
-          
-          query = mysql.format(query,table);
-          connection.query(query,function(err, rows){
-              if(err) {
-               res.json({
-                  "status" : 400
-                });
-              }else{
-                res.json({
-                  "status" : 200,
-                });
-              }            
-        }); 
-      });
-     });
-
-  //RETURN FILES
+  // LIST
   router.post ("/google/list", function(req, res){
     var query = "select ??, ??, ??, ?? from ?? where ?? = ?";
     var table = ["code", "access_token", "expiry_date", "token_type", "token", "id_user", req.body.userId];
@@ -112,7 +112,7 @@ REST_GOOGLE.prototype.handleRoutes= function(router,connection,md5) {
     }); 
   });
   
-
+  // DOWNLOAD
   router.post ("/google/download", function(req, res){
     var query = "select ??, ??, ??, ?? from ?? where ?? = ?";
     var table = ["code", "access_token", "expiry_date", "token_type", "token", "id_user", req.body.userId];
@@ -144,6 +144,7 @@ REST_GOOGLE.prototype.handleRoutes= function(router,connection,md5) {
     }); 
   });
 
+  //UPLOAD
   router.post ("/google/upload", function(req, res){
     var query = "select ??, ??, ??, ?? from ?? where ?? = ?";
     var table = ["code", "access_token", "expiry_date", "token_type", "token", "id_user", req.body.userId];
@@ -174,6 +175,7 @@ REST_GOOGLE.prototype.handleRoutes= function(router,connection,md5) {
     }); 
   });
 
+  //ABOUT USER
   router.post ("/google/about", function(req, res){
     var query = "select ??, ??, ??, ?? from ?? where ?? = ?";
     var table = ["code", "access_token", "expiry_date", "token_type", "token", "id_user", req.body.userId];
@@ -189,21 +191,24 @@ REST_GOOGLE.prototype.handleRoutes= function(router,connection,md5) {
           expiry_date: rows[0].expiry_date,
           token_type: rows[0].token_type
         });
-        var about = false;
-        about = getRemainingSpace(oauth2Client);
-        if (about = false){
+        var about = getInfosUser(oauth2Client);
+        if (about){
           res.json({
             "status" : 400
           });
         }else{
           res.json({
-            "status" : 200
+            "status" : 200,
+            "data" : about
           });   
         }
       }      
     }); 
   });
 }
+
+
+/////////////////////////////////////FUNCTION////////////////////////////////////////////////
 
 ////
 // Liste des fichiers d'un compte Google
@@ -281,7 +286,6 @@ function uploadFiles(auth,typeMedia, nameMedia, urlMedia){
     body: fs.createReadStream(urlMedia)
   };
 
-
   drive.files.create({
      resource: fileMetadata,
      media: media,
@@ -302,28 +306,18 @@ function uploadFiles(auth,typeMedia, nameMedia, urlMedia){
 ///
 // Récupération de l'espace restante d'un compte Google
 // Return : pourcentage de l'espace restante
+// Exemple de json : {"user":{"kind":"drive#user","displayName":"Segolene FATIER","me":true,"permissionId":"07683764300488805781","emailAddress":"fatier_s@etna-alternance.net"},"storageQuota":{"usage":"1638130503","usageInDrive":"1508434825","usageInDriveTrash":"96876611"},"appInstalled":true}
 ////
-function getRemainingSpace(auth){
-    console.log(auth);
-        
-  try{
-
-    drive.about.get({ }, function(err, resp) {
-      if (err){
-        console.log(err)
-      }else{
-        console.log("RESP : " + resp);
-      }
-      // console.log('Current user name: ' + resp.name);
-      // console.log('Root folder ID: ' + resp.rootFolderId);
-      // console.log('Total quota (bytes): ' + resp.quotaBytesTotal);
-      // console.log('Used quota (bytes): ' + resp.quotaBytesUsed);
-    });
-    return true;
-  }catch(e){
-    console.log("Error : Récupération des informations de l'utilisateur.");
-    return false;
-  }
+function getInfosUser(auth){   
+  drive.about.get({ fields : "appInstalled,storageQuota,user"}, function(err, resp) {
+    if (err){
+     console.log(err)
+    }else{
+      var dataUser = JSON.stringify(resp);
+      console.log("RESP : " + dataUser);;
+      return dataUser
+    }
+  });
 }
 
 module.exports = REST_GOOGLE;
