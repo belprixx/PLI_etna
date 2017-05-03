@@ -260,29 +260,35 @@ REST_GOOGLE.prototype.handleRoutes= function(router,connection,md5) {
 
     query = mysql.format(query,table);
     connection.query(query,function(err, rows){
-
       if(err) {
-	res.json({"Error" : 400, "Message" : "Error executing MySQL query"});
-      } else{
-	oauth2Client.setCredentials({
-	  access_token: rows[0].access_token,
-	  expiry_date: rows[0].expiry_date,
-	  token_type: rows[0].token_type
-	});
-	var about = getInfosUser(oauth2Client);
-	if (about){
-	  res.json({
-	    "status" : 400
-	  });
-	}else{
-	  res.json({
-	    "status" : 200,
-	    "data" : about
-	  });
-	}
+      	res.json({"Error" : 400, "Message" : "Error executing MySQL query"});
+      } 
+      else{
+      	oauth2Client.setCredentials({
+      	  access_token: rows[0].access_token,
+      	  expiry_date: rows[0].expiry_date,
+      	  token_type: rows[0].token_type
+      	});
+
+        drive.about.get({ fields : "appInstalled,storageQuota,user"}, function(err, resp) {
+          if (err){
+            res.json({
+              "status" : 400
+            });
+          }else{
+            res.json({
+              "status" : 200,
+              "data" : resp
+            });
+          }
+        });
       }
     });
   });
+
+
+
+
 
   //DELETE FILE
   router.post("google/delete", function (req, res){
@@ -383,15 +389,7 @@ function uploadFiles(auth,typeMedia, nameMedia, urlMedia){
 // Exemple de json : {"user":{"kind":"drive#user","displayName":"Segolene FATIER","me":true,"permissionId":"07683764300488805781","emailAddress":"fatier_s@etna-alternance.net"},"storageQuota":{"usage":"1638130503","usageInDrive":"1508434825","usageInDriveTrash":"96876611"},"appInstalled":true}
 ////
 function getInfosUser(auth){
-  drive.about.get({ fields : "appInstalled,storageQuota,user"}, function(err, resp) {
-    if (err){
-     console.log(err)
-    }else{
-      var dataUser = JSON.stringify(resp);
-      console.log("RESP : " + dataUser);;
-      return dataUser
-    }
-  });
+  
 }
 
 function deleteFile(auth, idFile){
