@@ -8,89 +8,89 @@ angular.module('pliApp').controller('homeController', function($scope, $location
     tabCloud = [];
     googleCloud = [];
     var isConnect = false;
-    
+
     //appel /api/cloud/list - verification des listes de cloud connectés (post)
     $http({
-        url: "/api/cloud/list", method: 'POST',
-        data: data,
-        headers : {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'}
+	url: "/api/cloud/list", method: 'POST',
+	data: data,
+	headers : {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'}
       }).then(function(response) {
-        if(response.status === 200) {
-          isConnect = true;
-          if (response.data.Cloud.length > 0){
-            tabCloud = response.data.Cloud;
-          }
-        }
+	if(response.status === 200) {
+	  isConnect = true;
+	  if (response.data.Cloud.length > 0){
+	    tabCloud = response.data.Cloud;
+	  }
+	}
     });
 
 	  $scope.myFunc = function() {
       FindGoogle = false;
       for(var i = 0; i < tabCloud.length; i++){
-        if (tabCloud[i].id_cloud === 1){
-          FindGoogle = true;
-        }
+	if (tabCloud[i].id_cloud === 1){
+	  FindGoogle = true;
+	}
       }
 
       if(FindGoogle == false)
-        {
-          $http({
-                  url: "/api/google/url", method: 'POST',
-                  data: $.param({ 'userId':userName.userId, 'idCloud' : 1 }),
-                  headers : {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'}
-              }).then(function(response) {
-                if(response.status === 200) {
-                  console.log(response.status);
-                }
-              });
+	{
+	  $http({
+		  url: "/api/google/url", method: 'POST',
+		  data: $.param({ 'userId':userName.userId, 'idCloud' : 1 }),
+		  headers : {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'}
+	      }).then(function(response) {
+		if(response.status === 200) {
+		  console.log(response.status);
+		}
+	      });
        }
 
-      /*console.log("Liste files google");
+     console.log("Liste files google");
       $http({
-           url: "/api/google/list", method: 'POST',
-           data: data,
-           headers : {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'}
-         }).then(function(response) {
-           if(response.status === 200) {
-             console.log("response :" + response);            
-           }
-         });
-      }; */ 
+	   url: "/api/google/list", method: 'POST',
+	   data: data,
+	   headers : {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'}
+	 }).then(function(response) {
+	   if(response.status === 200) {
+	     console.log("response :" + JSON.stringify(response.data));
+	   }
+	 });
+      };
 
     /*console.log("download files google");
     $http({
-          url: "/api/google/download", method: 'POST',
-          data: data,
-          headers : {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'}
-        }).then(function(response) {
-          if(response.status === 200) {
-            console.log("response :" + response);            
-          }
-        });
+	  url: "/api/google/download", method: 'POST',
+	  data: data,
+	  headers : {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'}
+	}).then(function(response) {
+	  if(response.status === 200) {
+	    console.log("response :" + response);
+	  }
+	});
     };*/
 
     // console.log("Upload files google");
     /*$http({
-          url: "/api/google/upload", method: 'POST',
-          data: data,
-          headers : {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'}
-        }).then(function(response) {
-          if(response.status === 200) {
-            console.log("Vérifie dans ton drive..");            
-          }
-        });
+	  url: "/api/google/upload", method: 'POST',
+	  data: data,
+	  headers : {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'}
+	}).then(function(response) {
+	  if(response.status === 200) {
+	    console.log("Vérifie dans ton drive..");
+	  }
+	});
     };*/
 
-    console.log("Recuperation des informations de l'utilisateur google");
+    /*console.log("Recuperation des informations de l'utilisateur google");
     $http({
-          url: "/api/google/about", method: 'POST',
-          data: data,
-          headers : {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'}
-        }).then(function(response) {
-          var dataResponse = JSON.stringify(response);
-          if(response.status === 200) {
-            console.log("Response :" + dataResponse);            
-          }
-        });
-    };
+	  url: "/api/google/about", method: 'POST',
+	  data: data,
+	  headers : {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'}
+	}).then(function(response) {
+	  var dataResponse = JSON.stringify(response);
+	  if(response.status === 200) {
+	    console.log("Response :" + dataResponse);
+	  }
+	});
+    };*/
 
 });
