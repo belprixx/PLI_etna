@@ -43,7 +43,7 @@ angular.module('pliApp').controller('homeController', function($scope, $location
 		}
 	      });
        }
-
+	/*
      console.log("Liste files google");
       $http({
 	   url: "/api/google/list", method: 'POST',
@@ -55,7 +55,7 @@ angular.module('pliApp').controller('homeController', function($scope, $location
 	   }
 	 });
       };
-
+*/
     /*console.log("download files google");
     $http({
 	  url: "/api/google/download", method: 'POST',
@@ -80,17 +80,17 @@ angular.module('pliApp').controller('homeController', function($scope, $location
 	});
     };*/
 
-    /*console.log("Recuperation des informations de l'utilisateur google");
+    console.log("Recuperation des informations de l'utilisateur google");
     $http({
 	  url: "/api/google/about", method: 'POST',
 	  data: data,
 	  headers : {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'}
 	}).then(function(response) {
-	  var dataResponse = JSON.stringify(response);
+
 	  if(response.status === 200) {
-	    console.log("Response :" + dataResponse);
+	    console.log("Response :" + JSON.stringify(response.data));
 	  }
 	});
-    };*/
+    };
 
 });
