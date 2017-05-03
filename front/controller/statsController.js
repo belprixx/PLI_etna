@@ -9,7 +9,7 @@ angular.module('pliApp').controller('statsController', function($scope, $http, u
                 }).then(function(response) {
                     if(response.status === 200) {
                         datas = response.data.data;
-                        console.log(response.data.data);
+                        console.log(response.data);
                         $scope.labels = ["Total Space", "Total Used Space", "Used Space in Drive", "Used Space in Drive Trash"];
                         $scope.data = [datas.storageQuota.limit, datas.storageQuota.usage, datas.storageQuota.usageInDrive, datas.storageQuota.usageInDriveTrash];
                         $scope.userName = datas.user.displayName;
