@@ -245,11 +245,10 @@ REST_GOOGLE.prototype.handleRoutes= function(router,connection,md5) {
 // Return : tableau de fichier
 ////
 function listFiles(auth) {
-  //var service = google.drive('v3');
   drive.files.list({
     auth: auth,
     pageSize: 10,
-    fields: "nextPageToken, files(id, name)"
+    fields: "nextPageToken, files(id, name, mimeType)"  //ajout du mimetype 
   }, function(err, response) {
     if (err) {
       console.log('The API returned an error: ' + err);
@@ -347,9 +346,10 @@ function getInfosUser(auth){
       return dataUser
     }
   });
+}
 
 function deleteFile(auth, idFile){
-   drive.files.emptyTrash({fileId: idFile }, function(err, resp){
+  drive.files.emptyTrash({fileId: idFile }, function(err, resp){
     if (err){
       console.log("Delete File :" + err);
       return false;
