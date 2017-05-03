@@ -188,8 +188,7 @@ REST_GOOGLE.prototype.handleRoutes= function(router,connection,md5) {
       }
     });
   });
-<<<<<<< HEAD
-=======
+
 
   //ABOUT USER
   router.post ("/google/about", function(req, res){
