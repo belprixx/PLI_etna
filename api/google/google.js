@@ -188,8 +188,6 @@ REST_GOOGLE.prototype.handleRoutes= function(router,connection,md5) {
       }
     });
   });
-<<<<<<< HEAD
-=======
 
   //ABOUT USER
   router.post ("/google/about", function(req, res){
@@ -251,7 +249,7 @@ REST_GOOGLE.prototype.handleRoutes= function(router,connection,md5) {
       }
     });
   });
-}
+
 
   //ABOUT USER
   router.post ("/google/about", function(req, res){
@@ -291,63 +289,61 @@ REST_GOOGLE.prototype.handleRoutes= function(router,connection,md5) {
 
 
   //DELETE FILE
-  router.post("google/delete", function (req, res){
-    var query = "select ??, ??, ??, ?? from ?? where ?? = ?";
-    var table = ["code", "access_token", "expiry_date", "token_type", "token", "id_user", req.body.userId];
+    router.post("google/delete", function (req, res){
+        var query = "select ??, ??, ??, ?? from ?? where ?? = ?";
+        var table = ["code", "access_token", "expiry_date", "token_type", "token", "id_user", req.body.userId];
 
-    query = mysql.format(query,table);
-    connection.query(query,function(err, rows){
+        query = mysql.format(query,table);
+        connection.query(query,function(err, rows){
 
-      if(err) {
-	res.json({"Error" : 400, "Message" : "Error executing MySQL query"});
-      } else{
-	oauth2Client.setCredentials({
-	  access_token: rows[0].access_token,
-	  expiry_date: rows[0].expiry_date,
-	  token_type: rows[0].token_type
-	});
-	var deleteFile = deleteFile(oauth2Client);
-	if (deleteFile === true){
-	  res.json({
-	    "status" : 400
-	  });
-	}else{
-	  res.json({
-	    "status" : 200
-	  });
-	}
-      }
+            if(err) {
+          	  res.json({"Error" : 400, "Message" : "Error executing MySQL query"});
+            }
+            else{
+              	oauth2Client.setCredentials({
+              	  access_token: rows[0].access_token,
+              	  expiry_date: rows[0].expiry_date,
+              	  token_type: rows[0].token_type
+              	});
+              	var deleteFile = deleteFile(oauth2Client);
+              	if (deleteFile === true){
+              	  res.json({
+              	    "status" : 400
+              	  });
+              	}else{
+              	  res.json({
+              	    "status" : 200
+              	  });
+              	}
+                
+            }
+        });
     });
-  });
 }
 
-
-/////////////////////////////////////FUNCTION////////////////////////////////////////////////
-
-
 function downloadFiles(auth,typeMedia, fileId) {
- drive.files.get({fileId: fileId }, function (err, metadata) {
-    if (err) {
-      console.error("Error GET files :" +  err);
-      return process.exit();
-    }
+    drive.files.get({fileId: fileId }, function (err, metadata) {
+        if (err) {
+          console.error("Error GET files :" +  err);
+          return process.exit();
+        }
 
-    console.log('Downloading %s...', metadata.name);
+        console.log('Downloading %s...', metadata.name);
 
-    var dest = fs.createWriteStream(metadata.name);
+        var dest = fs.createWriteStream(metadata.name);
 
-    drive.files.export({fileId: fileId, mimeType: typeMedia}).on('error', function (err) {
-      console.log('Error downloading file', err);
-      process.exit();
-    }).pipe(dest);
+        drive.files.export({fileId: fileId, mimeType: typeMedia}).on('error', function (err) {
+          console.log('Error downloading file', err);
+          process.exit();
+        }).pipe(dest);
 
-    dest.on('finish', function () {
-	console.log('Downloaded %s!', metadata.name);
-	return true
-    }).on('error', function (err) {
-      console.log('Error writing file', err);
-      return false;
-    });
+        dest.on('finish', function () {
+    	console.log('Downloaded %s!', metadata.name);
+    	return true
+        }).on('error', function (err) {
+          console.log('Error writing file', err);
+          return false;
+        });
   });
 }
 
