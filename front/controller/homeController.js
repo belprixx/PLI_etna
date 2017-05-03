@@ -15,7 +15,7 @@ angular.module('pliApp').controller('homeController', function($scope, $location
 	data: data,
 	headers : {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'}
       }).then(function(response) {
-	if(response.status === 200) {
+	if(response.data.Error === 200) {
 	  isConnect = true;
 	  if (response.data.Cloud.length > 0){
 	    tabCloud = response.data.Cloud;
