@@ -7,6 +7,7 @@ var md5 = require('MD5');
 var rest = require("./routes/routes.js");
 var dropbox = require("./dropbox/dropbox.js");
 var google = require("./google/google.js")
+var onedrive = require("./onedrive/onedrive.js")
 var app  = express();
 
 function REST(){
@@ -45,18 +46,19 @@ REST.prototype.configureExpress = function(connection) {
       var rest_router = new rest(router, connection, md5);
       var rest_dropbox = new dropbox(router, connection, md5);
       var rest_google = new google(router, connection, md5);
+      var rest_onedrive = new onedrive(router, connection, md5);
       self.startServer();
 }
 
 REST.prototype.startServer = function() {
-      app.listen(3000,function(){
-          console.log("All right ! I am alive at Port 3000.");
-      });
+  app.listen(3000,function(){
+    console.log("All right ! I am alive at Port 3000.");
+  });
 }
 
 REST.prototype.stop = function(err) {
-    console.log("ISSUE WITH MYSQL n" + err);
-    process.exit(1);
+  console.log("ISSUE WITH MYSQL n" + err);
+  process.exit(1);
 }
 
 

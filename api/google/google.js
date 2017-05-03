@@ -33,13 +33,12 @@ REST_GOOGLE.prototype.handleRoutes= function(router,connection,md5) {
    router.post ("/google/test", function(req, res){
        console.log("Google");
        res.json({
-	"Error": 200,
+	       "Error": 200,
        });
    });
   // END ROUTE TEST
 
   router.post("/google/url", function(req, res) {
-    console.log(req.body);
     userId = req.body.userId;
     idCloud = req.body.idCloud;
 
@@ -212,36 +211,6 @@ REST_GOOGLE.prototype.handleRoutes= function(router,connection,md5) {
     });
   });
 
-  //ABOUT USER
-  router.post ("/google/about", function(req, res){
-    var query = "select ??, ??, ??, ?? from ?? where ?? = ?";
-    var table = ["code", "access_token", "expiry_date", "token_type", "token", "id_user", req.body.userId];
-
-    query = mysql.format(query,table);
-    connection.query(query,function(err, rows){
-
-      if(err) {
-	res.json({"Error" : 400, "Message" : "Error executing MySQL query"});
-      } else{
-	oauth2Client.setCredentials({
-	  access_token: rows[0].access_token,
-	  expiry_date: rows[0].expiry_date,
-	  token_type: rows[0].token_type
-	});
-	var about = getInfosUser(oauth2Client);
-	if (about){
-	  res.json({
-	    "status" : 400
-	  });
-	}else{
-	  res.json({
-	    "status" : 200,
-	    "data" : about
-	  });
-	}
-      }
-    });
-  });
 
   //DELETE FILE
   router.post("google/delete", function (req, res){
@@ -295,10 +264,13 @@ REST_GOOGLE.prototype.handleRoutes= function(router,connection,md5) {
 
         drive.about.get({ fields : "appInstalled,storageQuota,user"}, function(err, resp) {
           if (err){
+            console.log(err);
             res.json({
               "status" : 400
             });
           }else{
+            var dataUser = JSON.stringify(resp);
+            console.log(dataUser);
             res.json({
               "status" : 200,
               "data" : resp
