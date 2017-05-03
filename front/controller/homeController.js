@@ -44,7 +44,7 @@ angular.module('pliApp').controller('homeController', function($scope, $location
               });
        }
 
-      console.log("Liste files google");
+      /*console.log("Liste files google");
       $http({
            url: "/api/google/list", method: 'POST',
            data: data,
@@ -54,7 +54,7 @@ angular.module('pliApp').controller('homeController', function($scope, $location
              console.log("response :" + response);            
            }
          });
-      };  
+      }; */ 
 
     /*console.log("download files google");
     $http({
@@ -68,5 +68,29 @@ angular.module('pliApp').controller('homeController', function($scope, $location
         });
     };*/
 
+    // console.log("Upload files google");
+    /*$http({
+          url: "/api/google/upload", method: 'POST',
+          data: data,
+          headers : {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'}
+        }).then(function(response) {
+          if(response.status === 200) {
+            console.log("Vérifie dans ton drive..");            
+          }
+        });
+    };*/
+
+    console.log("Recuperation des informations de l'utilisateur google");
+    $http({
+          url: "/api/google/about", method: 'POST',
+          data: data,
+          headers : {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'}
+        }).then(function(response) {
+          var dataResponse = JSON.stringify(response);
+          if(response.status === 200) {
+            console.log("Response :" + dataResponse);            
+          }
+        });
+    };
 
 });

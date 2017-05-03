@@ -1,4 +1,4 @@
-angular.module('pliApp',['chart.js']).controller('statsController', function($scope, $location) {
+angular.module('pliApp').controller('statsController', function($scope, $location) {
     $scope.labels = ["January", "February", "March", "April", "May", "June", "July"];
     $scope.series = ['Series A', 'Series B'];
     $scope.data = [
@@ -27,6 +27,4 @@ angular.module('pliApp',['chart.js']).controller('statsController', function($sc
             ]
         }
     };
-});/**
- * Created by AlDrac on 26/04/2017.
- */
+});
