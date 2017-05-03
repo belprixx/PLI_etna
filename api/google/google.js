@@ -336,7 +336,7 @@ function uploadFiles(auth,typeMedia, nameMedia, urlMedia){
 // Return : pourcentage de l'espace restante
 // Exemple de json : {"user":{"kind":"drive#user","displayName":"Segolene FATIER","me":true,"permissionId":"07683764300488805781","emailAddress":"fatier_s@etna-alternance.net"},"storageQuota":{"usage":"1638130503","usageInDrive":"1508434825","usageInDriveTrash":"96876611"},"appInstalled":true}
 ////
-function getInfosUser(auth){   
+function getInfosUser(auth){
   drive.about.get({ fields : "appInstalled,storageQuota,user"}, function(err, resp) {
     if (err){
      console.log(err)

@@ -1,4 +1,18 @@
-angular.module('pliApp').controller('statsController', function($scope, $location) {
+angular.module('pliApp').controller('statsController', function($scope, $http, userFactory) {
+    var userName = userFactory.getUsername();
+    var data = $.param({'userId':userName.userId});
+
+    $http({
+        url: "/api/google/about", method: 'POST',
+        data: data,
+        headers : {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'}
+    }).then(function(response) {
+        if(response.status === 200) {
+            console.log(response);
+        }
+    });
+
+
     $scope.labels = ["January", "February", "March", "April", "May", "June", "July"];
     $scope.series = ['Series A', 'Series B'];
     $scope.data = [
