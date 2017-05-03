@@ -205,6 +205,36 @@ REST_GOOGLE.prototype.handleRoutes= function(router,connection,md5) {
       }      
     }); 
   });
+
+  //DELETE FILE
+  router.post("google/delete", function (req, res){
+    var query = "select ??, ??, ??, ?? from ?? where ?? = ?";
+    var table = ["code", "access_token", "expiry_date", "token_type", "token", "id_user", req.body.userId];
+    
+    query = mysql.format(query,table);
+    connection.query(query,function(err, rows){
+
+      if(err) {
+        res.json({"Error" : 400, "Message" : "Error executing MySQL query"});
+      } else{
+        oauth2Client.setCredentials({
+          access_token: rows[0].access_token,
+          expiry_date: rows[0].expiry_date,
+          token_type: rows[0].token_type
+        });
+        var deleteFile = deleteFile(oauth2Client);
+        if (deleteFile === true){
+          res.json({
+            "status" : 400
+          });
+        }else{
+          res.json({
+            "status" : 200
+          });   
+        }
+      }      
+    }); 
+  });
 }
 
 
@@ -292,7 +322,6 @@ function uploadFiles(auth,typeMedia, nameMedia, urlMedia){
      fields: 'id'
     }, function(err, file) {
     if(err) {
-      // Handle error
       console.log(err);
       return false;
     } else {
@@ -317,6 +346,16 @@ function getInfosUser(auth){
       console.log("RESP : " + dataUser);;
       return dataUser
     }
+  });
+
+function deleteFile(auth, idFile){
+   drive.files.emptyTrash({fileId: idFile }, function(err, resp){
+    if (err){
+      console.log("Delete File :" + err);
+      return false;
+    }else{
+      return true;
+    }      
   });
 }
 
