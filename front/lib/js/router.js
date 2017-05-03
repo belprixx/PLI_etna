@@ -1,5 +1,5 @@
 // create the module and name it routeApp
-var routeApp = angular.module('pliApp', ['ngRoute', 'LocalStorageModule']);
+var routeApp = angular.module('pliApp', ['ngRoute', 'LocalStorageModule', 'chart.js']);
 
 // configure our routes
 routeApp.config(function($routeProvider) {
@@ -20,6 +20,11 @@ routeApp.config(function($routeProvider) {
     .when("/logout", {
         templateUrl :'/view/logout.html',
         controller : 'logoutController'
+
+    })
+    .when("/stats", {
+        templateUrl :'/view/stats.html',
+        controller : 'statsController'
 
     })
     // route for the home page
