@@ -33,7 +33,7 @@ REST_GOOGLE.prototype.handleRoutes= function(router,connection,md5) {
    router.post ("/google/test", function(req, res){
        console.log("Google");
        res.json({
-        "Error": 200,
+	"Error": 200,
        });
    });
   // END ROUTE TEST
@@ -47,10 +47,10 @@ REST_GOOGLE.prototype.handleRoutes= function(router,connection,md5) {
       var table = ["id", "id_user", "id_cloud", "access_token", "token_type", "expiry_date", "code", null, userId, idCloud, null, null, null, null];
       query = mysql.format(query,table);
       connection.query(query,function(err, rows){
-          if(err) {
-            console.log("Error: 400 : Error executing MySQL query");
-          }
-      });      
+	  if(err) {
+	    console.log("Error: 400 : Error executing MySQL query");
+	  }
+      });
       opn(url);
    });
 
@@ -61,27 +61,27 @@ REST_GOOGLE.prototype.handleRoutes= function(router,connection,md5) {
 
     oauth2Client.getToken(code, function(err, tokens) {
       if (err) {
-        res.send(err);
-        return;
+	res.send(err);
+	return;
       }
       oauth2Client.setCredentials(tokens);
-              
+
       //INSERT TOKEN INTO DATABASE
       var query = "UPDATE ?? SET ?? = ?, ?? = ? , ?? = ? , ?? = ? WHERE ?? = ?";
       var table = ["token", "access_token", tokens.access_token,"token_type",tokens.token_type,"expiry_date", tokens.expiry_date,"code", code, "id_user", global.userId];
-      
+
       query = mysql.format(query,table);
-        connection.query(query,function(err, rows){
-        if(err) {
-          res.json({
-          "status" : 400
-          });
-        }else{
-          res.json({
-            "status" : 200,
-          });
-        }            
-      }); 
+	connection.query(query,function(err, rows){
+	if(err) {
+	  res.json({
+	  "status" : 400
+	  });
+	}else{
+	  res.json({
+	    "status" : 200,
+	  });
+	}
+      });
     });
    });
 
@@ -89,281 +89,236 @@ REST_GOOGLE.prototype.handleRoutes= function(router,connection,md5) {
   router.post ("/google/list", function(req, res){
     var query = "select ??, ??, ??, ?? from ?? where ?? = ?";
     var table = ["code", "access_token", "expiry_date", "token_type", "token", "id_user", req.body.userId];
-    
+
     query = mysql.format(query,table);
     connection.query(query,function(err, rows){
 
       if(err) {
-        res.json({"Error" : 400, "Message" : "Error executing MySQL query"});
+	res.json({"Error" : 400, "Message" : "Error executing MySQL query"});
       } else{
-        oauth2Client.setCredentials({
-          access_token: rows[0].access_token,
-          expiry_date: rows[0].expiry_date,
-          token_type: rows[0].token_type
-        });
+	oauth2Client.setCredentials({
+	  access_token: rows[0].access_token,
+	  expiry_date: rows[0].expiry_date,
+	  token_type: rows[0].token_type
+	});
 
-<<<<<<< HEAD
-        var files = [];
-=======
-        listFiles(oauth2Client);
->>>>>>> 3b880508c72dcb3063cf7afd8e535807cf594b82
-        
-        drive.files.list({
-          auth: oauth2Client,
-          pageSize: 10,
-          fields: "nextPageToken, files(id, name, mimeType)"  //ajout du mimetype 
-        }, function(err, response) {
-          if (err) {
-            console.log('The API returned an error: ' + err);
-            return;
-          }
-          files = response.files;
-          if (files.length == 0) {
-            console.log('No files found.');
-          } else {
+	drive.files.list({
+	  auth: oauth2Client,
+	  pageSize: 10,
+	  fields: "nextPageToken, files(id, name, mimeType)"  //ajout du mimetype
+	}, function(err, response) {
+	  if (err) {
+	    console.log('The API returned an error: ' + err);
+	    return;
+	  }
+	  files = response.files;
+	  if (files.length == 0) {
+	    console.log('No files found.');
+	  } else {
 
-        res.json({
-            "status" : 200,
-            "data" : files,
-          });
-          }
-        });
-      }      
-    }); 
+	res.json({
+	    "status" : 200,
+	    "data" : files,
+	  });
+	  }
+	});
+      }
+    });
   });
-  
+
   // DOWNLOAD
   router.post ("/google/download", function(req, res){
     var query = "select ??, ??, ??, ?? from ?? where ?? = ?";
     var table = ["code", "access_token", "expiry_date", "token_type", "token", "id_user", req.body.userId];
-    
+
     query = mysql.format(query,table);
     connection.query(query,function(err, rows){
 
       if(err) {
-        res.json({"Error" : 400, "Message" : "Error executing MySQL query"});
+	res.json({"Error" : 400, "Message" : "Error executing MySQL query"});
       } else{
-        oauth2Client.setCredentials({
-          access_token: rows[0].access_token,
-          expiry_date: rows[0].expiry_date,
-          token_type: rows[0].token_type
-        });
-        var download = false;
-        download = downloadFiles(oauth2Client,"application/pdf", '0B_tt8ZmaBB4BcTNrNlhNdmRURjQ');
-        if (download = false){
-          res.json({
-            "status" : 400
-          });
-        }else{
-          res.json({
-            "status" : 200,
-            "tabListeFiles" : download,
-          });   
-        }
-      }      
-    }); 
+	oauth2Client.setCredentials({
+	  access_token: rows[0].access_token,
+	  expiry_date: rows[0].expiry_date,
+	  token_type: rows[0].token_type
+	});
+	var download = false;
+	download = downloadFiles(oauth2Client,"application/pdf", '0B_tt8ZmaBB4BcTNrNlhNdmRURjQ');
+	if (download = false){
+	  res.json({
+	    "status" : 400
+	  });
+	}else{
+	  res.json({
+	    "status" : 200,
+	    "tabListeFiles" : download,
+	  });
+	}
+      }
+    });
   });
 
   //UPLOAD
   router.post ("/google/upload", function(req, res){
     var query = "select ??, ??, ??, ?? from ?? where ?? = ?";
     var table = ["code", "access_token", "expiry_date", "token_type", "token", "id_user", req.body.userId];
-    
+
     query = mysql.format(query,table);
     connection.query(query,function(err, rows){
 
       if(err) {
-        res.json({"Error" : 400, "Message" : "Error executing MySQL query"});
+	res.json({"Error" : 400, "Message" : "Error executing MySQL query"});
       } else{
-        oauth2Client.setCredentials({
-          access_token: rows[0].access_token,
-          expiry_date: rows[0].expiry_date,
-          token_type: rows[0].token_type
-        });
-        var upload = false;
-        upload = uploadFiles(oauth2Client, "text/html", "nomMediaTest", "/home/sfatier/index.html");
-        if (upload = false){
-          res.json({
-            "status" : 400
-          });
-        }else{
-          res.json({
-            "status" : 200
-          });   
-        }
-      }      
-    }); 
-  });
-<<<<<<< HEAD
-=======
-
-  //ABOUT USER
-  router.post ("/google/about", function(req, res){
-    var query = "select ??, ??, ??, ?? from ?? where ?? = ?";
-    var table = ["code", "access_token", "expiry_date", "token_type", "token", "id_user", req.body.userId];
-    
-    query = mysql.format(query,table);
-    connection.query(query,function(err, rows){
-
-      if(err) {
-        res.json({"Error" : 400, "Message" : "Error executing MySQL query"});
-      } else{
-        oauth2Client.setCredentials({
-          access_token: rows[0].access_token,
-          expiry_date: rows[0].expiry_date,
-          token_type: rows[0].token_type
-        });
-        var about = getInfosUser(oauth2Client);
-        if (about){
-          res.json({
-            "status" : 400
-          });
-        }else{
-          res.json({
-            "status" : 200,
-            "data" : about
-          });   
-        }
-      }      
-    }); 
-  });
-
-  //DELETE FILE
-  router.post("google/delete", function (req, res){
-    var query = "select ??, ??, ??, ?? from ?? where ?? = ?";
-    var table = ["code", "access_token", "expiry_date", "token_type", "token", "id_user", req.body.userId];
-    
-    query = mysql.format(query,table);
-    connection.query(query,function(err, rows){
-
-      if(err) {
-        res.json({"Error" : 400, "Message" : "Error executing MySQL query"});
-      } else{
-        oauth2Client.setCredentials({
-          access_token: rows[0].access_token,
-          expiry_date: rows[0].expiry_date,
-          token_type: rows[0].token_type
-        });
-        var deleteFile = deleteFile(oauth2Client);
-        if (deleteFile === true){
-          res.json({
-            "status" : 400
-          });
-        }else{
-          res.json({
-            "status" : 200
-          });   
-        }
-      }      
-    }); 
-  });
-}
->>>>>>> 3b880508c72dcb3063cf7afd8e535807cf594b82
-
-  //ABOUT USER
-  router.post ("/google/about", function(req, res){
-    var query = "select ??, ??, ??, ?? from ?? where ?? = ?";
-    var table = ["code", "access_token", "expiry_date", "token_type", "token", "id_user", req.body.userId];
-    
-    query = mysql.format(query,table);
-    connection.query(query,function(err, rows){
-
-<<<<<<< HEAD
-      if(err) {
-        res.json({"Error" : 400, "Message" : "Error executing MySQL query"});
-      } else{
-        oauth2Client.setCredentials({
-          access_token: rows[0].access_token,
-          expiry_date: rows[0].expiry_date,
-          token_type: rows[0].token_type
-        });
-        var about = getInfosUser(oauth2Client);
-        if (about){
-          res.json({
-            "status" : 400
-          });
-        }else{
-          res.json({
-            "status" : 200,
-            "data" : about
-          });   
-        }
-      }      
-    }); 
-  });
-
-  //DELETE FILE
-  router.post("google/delete", function (req, res){
-    var query = "select ??, ??, ??, ?? from ?? where ?? = ?";
-    var table = ["code", "access_token", "expiry_date", "token_type", "token", "id_user", req.body.userId];
-    
-    query = mysql.format(query,table);
-    connection.query(query,function(err, rows){
-
-      if(err) {
-        res.json({"Error" : 400, "Message" : "Error executing MySQL query"});
-      } else{
-        oauth2Client.setCredentials({
-          access_token: rows[0].access_token,
-          expiry_date: rows[0].expiry_date,
-          token_type: rows[0].token_type
-        });
-        var deleteFile = deleteFile(oauth2Client);
-        if (deleteFile === true){
-          res.json({
-            "status" : 400
-          });
-        }else{
-          res.json({
-            "status" : 200
-          });   
-        }
-      }      
-    }); 
-  });
-}
-
-
-/////////////////////////////////////FUNCTION////////////////////////////////////////////////
-
-
-=======
-/////////////////////////////////////FUNCTION////////////////////////////////////////////////
-
-////
-// Liste des fichiers d'un compte Google
-// Return : tableau de fichier
-////
-function listFiles(auth) {
-  drive.files.list({
-    auth: auth,
-    pageSize: 10,
-    fields: "nextPageToken, files(id, name, mimeType)"  //ajout du mimetype 
-  }, function(err, response) {
-    if (err) {
-      console.log('The API returned an error: ' + err);
-      return;
-    }
-    var files = response.files;
-    if (files.length == 0) {
-      console.log('No files found.');
-    } else {
-      console.log('Files:');
-      for (var i = 0; i < files.length; i++) {
-        var file = files[i];
-        console.log('%s (%s)', file.name, file.id);
+	oauth2Client.setCredentials({
+	  access_token: rows[0].access_token,
+	  expiry_date: rows[0].expiry_date,
+	  token_type: rows[0].token_type
+	});
+	var upload = false;
+	upload = uploadFiles(oauth2Client, "text/html", "nomMediaTest", "/home/sfatier/index.html");
+	if (upload = false){
+	  res.json({
+	    "status" : 400
+	  });
+	}else{
+	  res.json({
+	    "status" : 200
+	  });
+	}
       }
-      return files;
-    }
+    });
+  });
+<<<<<<< HEAD
+=======
+
+  //ABOUT USER
+  router.post ("/google/about", function(req, res){
+    var query = "select ??, ??, ??, ?? from ?? where ?? = ?";
+    var table = ["code", "access_token", "expiry_date", "token_type", "token", "id_user", req.body.userId];
+
+    query = mysql.format(query,table);
+    connection.query(query,function(err, rows){
+
+      if(err) {
+	res.json({"Error" : 400, "Message" : "Error executing MySQL query"});
+      } else{
+	oauth2Client.setCredentials({
+	  access_token: rows[0].access_token,
+	  expiry_date: rows[0].expiry_date,
+	  token_type: rows[0].token_type
+	});
+	var about = getInfosUser(oauth2Client);
+	if (about){
+	  res.json({
+	    "status" : 400
+	  });
+	}else{
+	  res.json({
+	    "status" : 200,
+	    "data" : about
+	  });
+	}
+      }
+    });
+  });
+
+  //DELETE FILE
+  router.post("google/delete", function (req, res){
+    var query = "select ??, ??, ??, ?? from ?? where ?? = ?";
+    var table = ["code", "access_token", "expiry_date", "token_type", "token", "id_user", req.body.userId];
+
+    query = mysql.format(query,table);
+    connection.query(query,function(err, rows){
+
+      if(err) {
+	res.json({"Error" : 400, "Message" : "Error executing MySQL query"});
+      } else{
+	oauth2Client.setCredentials({
+	  access_token: rows[0].access_token,
+	  expiry_date: rows[0].expiry_date,
+	  token_type: rows[0].token_type
+	});
+	var deleteFile = deleteFile(oauth2Client);
+	if (deleteFile === true){
+	  res.json({
+	    "status" : 400
+	  });
+	}else{
+	  res.json({
+	    "status" : 200
+	  });
+	}
+      }
+    });
   });
 }
 
-////
-// Récupération des fichiers d'un compte Google
-// Return : tableau de fichier
-// fichier => nom; id;
-////
->>>>>>> 3b880508c72dcb3063cf7afd8e535807cf594b82
+  //ABOUT USER
+  router.post ("/google/about", function(req, res){
+    var query = "select ??, ??, ??, ?? from ?? where ?? = ?";
+    var table = ["code", "access_token", "expiry_date", "token_type", "token", "id_user", req.body.userId];
+
+    query = mysql.format(query,table);
+    connection.query(query,function(err, rows){
+
+      if(err) {
+	res.json({"Error" : 400, "Message" : "Error executing MySQL query"});
+      } else{
+	oauth2Client.setCredentials({
+	  access_token: rows[0].access_token,
+	  expiry_date: rows[0].expiry_date,
+	  token_type: rows[0].token_type
+	});
+	var about = getInfosUser(oauth2Client);
+	if (about){
+	  res.json({
+	    "status" : 400
+	  });
+	}else{
+	  res.json({
+	    "status" : 200,
+	    "data" : about
+	  });
+	}
+      }
+    });
+  });
+
+  //DELETE FILE
+  router.post("google/delete", function (req, res){
+    var query = "select ??, ??, ??, ?? from ?? where ?? = ?";
+    var table = ["code", "access_token", "expiry_date", "token_type", "token", "id_user", req.body.userId];
+
+    query = mysql.format(query,table);
+    connection.query(query,function(err, rows){
+
+      if(err) {
+	res.json({"Error" : 400, "Message" : "Error executing MySQL query"});
+      } else{
+	oauth2Client.setCredentials({
+	  access_token: rows[0].access_token,
+	  expiry_date: rows[0].expiry_date,
+	  token_type: rows[0].token_type
+	});
+	var deleteFile = deleteFile(oauth2Client);
+	if (deleteFile === true){
+	  res.json({
+	    "status" : 400
+	  });
+	}else{
+	  res.json({
+	    "status" : 200
+	  });
+	}
+      }
+    });
+  });
+}
+
+
+/////////////////////////////////////FUNCTION////////////////////////////////////////////////
+
+
 function downloadFiles(auth,typeMedia, fileId) {
  drive.files.get({fileId: fileId }, function (err, metadata) {
     if (err) {
@@ -381,8 +336,8 @@ function downloadFiles(auth,typeMedia, fileId) {
     }).pipe(dest);
 
     dest.on('finish', function () {
-        console.log('Downloaded %s!', metadata.name);
-        return true
+	console.log('Downloaded %s!', metadata.name);
+	return true
     }).on('error', function (err) {
       console.log('Error writing file', err);
       return false;
@@ -427,7 +382,7 @@ function uploadFiles(auth,typeMedia, nameMedia, urlMedia){
 // Return : pourcentage de l'espace restante
 // Exemple de json : {"user":{"kind":"drive#user","displayName":"Segolene FATIER","me":true,"permissionId":"07683764300488805781","emailAddress":"fatier_s@etna-alternance.net"},"storageQuota":{"usage":"1638130503","usageInDrive":"1508434825","usageInDriveTrash":"96876611"},"appInstalled":true}
 ////
-function getInfosUser(auth){   
+function getInfosUser(auth){
   drive.about.get({ fields : "appInstalled,storageQuota,user"}, function(err, resp) {
     if (err){
      console.log(err)
@@ -446,7 +401,7 @@ function deleteFile(auth, idFile){
       return false;
     }else{
       return true;
-    }      
+    }
   });
 }
 
