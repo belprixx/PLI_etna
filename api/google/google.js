@@ -102,11 +102,31 @@ REST_GOOGLE.prototype.handleRoutes= function(router,connection,md5) {
           token_type: rows[0].token_type
         });
 
+<<<<<<< HEAD
+        var files = [];
+=======
         listFiles(oauth2Client);
+>>>>>>> 3b880508c72dcb3063cf7afd8e535807cf594b82
         
+        drive.files.list({
+          auth: oauth2Client,
+          pageSize: 10,
+          fields: "nextPageToken, files(id, name, mimeType)"  //ajout du mimetype 
+        }, function(err, response) {
+          if (err) {
+            console.log('The API returned an error: ' + err);
+            return;
+          }
+          files = response.files;
+          if (files.length == 0) {
+            console.log('No files found.');
+          } else {
+
         res.json({
-          "status" : 200,
-          "tabListeFiles" : listFiles(oauth2Client),
+            "status" : 200,
+            "data" : files,
+          });
+          }
         });
       }      
     }); 
@@ -174,6 +194,8 @@ REST_GOOGLE.prototype.handleRoutes= function(router,connection,md5) {
       }      
     }); 
   });
+<<<<<<< HEAD
+=======
 
   //ABOUT USER
   router.post ("/google/about", function(req, res){
@@ -236,8 +258,76 @@ REST_GOOGLE.prototype.handleRoutes= function(router,connection,md5) {
     }); 
   });
 }
+>>>>>>> 3b880508c72dcb3063cf7afd8e535807cf594b82
+
+  //ABOUT USER
+  router.post ("/google/about", function(req, res){
+    var query = "select ??, ??, ??, ?? from ?? where ?? = ?";
+    var table = ["code", "access_token", "expiry_date", "token_type", "token", "id_user", req.body.userId];
+    
+    query = mysql.format(query,table);
+    connection.query(query,function(err, rows){
+
+<<<<<<< HEAD
+      if(err) {
+        res.json({"Error" : 400, "Message" : "Error executing MySQL query"});
+      } else{
+        oauth2Client.setCredentials({
+          access_token: rows[0].access_token,
+          expiry_date: rows[0].expiry_date,
+          token_type: rows[0].token_type
+        });
+        var about = getInfosUser(oauth2Client);
+        if (about){
+          res.json({
+            "status" : 400
+          });
+        }else{
+          res.json({
+            "status" : 200,
+            "data" : about
+          });   
+        }
+      }      
+    }); 
+  });
+
+  //DELETE FILE
+  router.post("google/delete", function (req, res){
+    var query = "select ??, ??, ??, ?? from ?? where ?? = ?";
+    var table = ["code", "access_token", "expiry_date", "token_type", "token", "id_user", req.body.userId];
+    
+    query = mysql.format(query,table);
+    connection.query(query,function(err, rows){
+
+      if(err) {
+        res.json({"Error" : 400, "Message" : "Error executing MySQL query"});
+      } else{
+        oauth2Client.setCredentials({
+          access_token: rows[0].access_token,
+          expiry_date: rows[0].expiry_date,
+          token_type: rows[0].token_type
+        });
+        var deleteFile = deleteFile(oauth2Client);
+        if (deleteFile === true){
+          res.json({
+            "status" : 400
+          });
+        }else{
+          res.json({
+            "status" : 200
+          });   
+        }
+      }      
+    }); 
+  });
+}
 
 
+/////////////////////////////////////FUNCTION////////////////////////////////////////////////
+
+
+=======
 /////////////////////////////////////FUNCTION////////////////////////////////////////////////
 
 ////
@@ -273,6 +363,7 @@ function listFiles(auth) {
 // Return : tableau de fichier
 // fichier => nom; id;
 ////
+>>>>>>> 3b880508c72dcb3063cf7afd8e535807cf594b82
 function downloadFiles(auth,typeMedia, fileId) {
  drive.files.get({fileId: fileId }, function (err, metadata) {
     if (err) {
