@@ -261,7 +261,7 @@ REST_GOOGLE.prototype.handleRoutes= function(router,connection,md5) {
     connection.query(query,function(err, rows){
       if(err) {
       	res.json({"Error" : 400, "Message" : "Error executing MySQL query"});
-      } 
+      }
       else{
       	oauth2Client.setCredentials({
       	  access_token: rows[0].access_token,
