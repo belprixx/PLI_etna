@@ -44,7 +44,7 @@ angular.module('pliApp').controller('homeController', function($scope, $location
               });
        }
 
-      console.log("Liste files google");
+      /*console.log("Liste files google");
       $http({
            url: "/api/google/list", method: 'POST',
            data: data,
@@ -54,7 +54,11 @@ angular.module('pliApp').controller('homeController', function($scope, $location
              console.log("response :" + JSON.stringify(response.data));            
            }
          });
+<<<<<<< HEAD
       }; 
+=======
+      }; */ 
+>>>>>>> 3b880508c72dcb3063cf7afd8e535807cf594b82
 
     /*console.log("download files google");
     $http({
@@ -80,7 +84,11 @@ angular.module('pliApp').controller('homeController', function($scope, $location
         });
     };*/
 
+<<<<<<< HEAD
     /*console.log("Recuperation des informations de l'utilisateur google");
+=======
+    console.log("Recuperation des informations de l'utilisateur google");
+>>>>>>> 3b880508c72dcb3063cf7afd8e535807cf594b82
     $http({
           url: "/api/google/about", method: 'POST',
           data: data,
@@ -91,6 +99,10 @@ angular.module('pliApp').controller('homeController', function($scope, $location
             console.log("Response :" + dataResponse);            
           }
         });
+<<<<<<< HEAD
     };*/
+=======
+    };
+>>>>>>> 3b880508c72dcb3063cf7afd8e535807cf594b82
 
 });
