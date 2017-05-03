@@ -1,5 +1,5 @@
 // create the module and name it routeApp
-var routeApp = angular.module('pliApp', ['ngRoute', 'LocalStorageModule']);
+var routeApp = angular.module('pliApp', ['ngRoute', 'LocalStorageModule', 'chart.js']);
 
 // configure our routes
 routeApp.config(function($routeProvider) {
@@ -23,7 +23,7 @@ routeApp.config(function($routeProvider) {
 
     })
     .when("/stats", {
-        templateUrl :'/view/stat.html',
+        templateUrl :'/view/stats.html',
         controller : 'statsController'
 
     })
