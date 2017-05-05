@@ -27,6 +27,10 @@ routeApp.config(function($routeProvider) {
         controller : 'statsController'
 
     })
+    .when("/list", {
+        templateUrl : '/view/list.html',
+        controller : 'listController'
+    })
     // route for the home page
     .otherwise({
         redirectTo: '/'
